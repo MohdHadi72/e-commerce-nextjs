@@ -2,14 +2,14 @@ import mongoose from "mongoose";
 
 const OrderSchema = new mongoose.Schema(
   {
-    items: [
+    items:  
       {
         id: String,
         title: String,
         price: Number,
         image: String,
       },
-    ],
+    
     totalPrice: Number,
   },
   { timestamps: true }

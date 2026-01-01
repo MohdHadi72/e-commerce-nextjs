@@ -1,22 +1,32 @@
 import { NextResponse } from "next/server";
-import mongoose from "mongoose";
-import { ConnectionDB } from "@/ProductDB/connect";
+import connectDB from "@/connectDB/connect";
+import Order from "@/connectDB/Order";
 
-export async function GET() {
+export async function POST(req) {
   try {
-    await mongoose.connect(ConnectionDB);
+    await connectDB();
+
+    const { cartlist, totalPrice } = await req.json();
+
+    if (!cartlist || cartlist.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Cart is empty" },
+        { status: 400 }
+      );
+    }
+
+    await Order.create({
+      items: cartlist,
+      totalPrice,
+    });
 
     return NextResponse.json({
       success: true,
-      message: "API is working & MongoDB connected ✅",
+      message: "Order placed successfully ✅",
     });
   } catch (error) {
     return NextResponse.json(
-      {
-        success: false,
-        message: "MongoDB connection failed ❌",
-        error: error.message,
-      },
+      { success: false, error: error.message },
       { status: 500 }
     );
   }

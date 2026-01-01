@@ -6,7 +6,7 @@ import { useCart } from "@/app/context/CartContext";
 import { useRouter } from "next/navigation";
 
 function Navbar() {
-  const { cart } = useCart();
+  const { cartlist } = useCart();
   const [query, setQuery] = useState("");
   const router = useRouter();
 
@@ -47,14 +47,15 @@ function Navbar() {
           </button>
         </div>
 
-        <Link href="/context" className="relative">
-          {cart.length > 0 && (
-            <span className="absolute -top-2 -right-4 bg-orange-500 text-white text-xs px-2 rounded-full">
-              {cart.length}
-            </span>
-          )}
-          <img className="h-6" src="/images/cart.png" alt="Cart" />
-        </Link>
+       <Link href="/context" className="relative">
+        {cartlist.length > 0 && (
+          <span className="absolute -top-2 -right-4 bg-orange-500 text-white text-xs px-2 rounded-full">
+            {cartlist.length}
+          </span>
+          
+        )}
+        <img className="h-6" src="/images/cart.png" alt="Cart" />
+      </Link>
       </div>
     </nav>
   );

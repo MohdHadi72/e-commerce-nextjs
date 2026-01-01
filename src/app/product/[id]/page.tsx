@@ -56,10 +56,11 @@ export default async function ProductPage({
             {product.description}
           </p>
 
-          {/* ✅ WORKING ADD TO CART */}
+     
           <AddToCartButton product={product} />
         </div>
       </div>
     </div>
   );
 }
+

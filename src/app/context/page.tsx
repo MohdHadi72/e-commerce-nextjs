@@ -1,34 +1,37 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { useCart } from "@/app/context/CartContext";
 import Link from "next/link";
+import { useCart } from "@/app/context/CartContext";
 
 export default function Page() {
-  const { cart, clearCart } = useCart();
+  const { cartlist, clearCart } = useCart();
+  const [loading, setLoading] = useState(false);
 
- 
+  // Auto clear cart after 5 minutes
   useEffect(() => {
-    if (cart.length > 0) {
+    if (cartlist.length > 0) {
       const timer = setTimeout(() => {
         clearCart();
-      }, 300000);
+      }, 300000); // 5 minutes
 
       return () => clearTimeout(timer);
     }
-  }, [cart, clearCart]);
+  }, [cartlist, clearCart]);
 
-  const totalPrice = cart.reduce(
+  // Calculate total price
+  const totalPrice = cartlist.reduce(
     (total, item) => total + item.price,
     0
   );
 
-  if (cart.length === 0) {
+  // Empty cart UI
+  if (cartlist.length === 0) {
     return (
-      <div className="container mx-auto max-w-4xl py-10 text-center">
+      <div className="container mx-auto max-w-4xl py-16 text-center">
         <h1 className="text-2xl font-bold mb-4">
-          Cart Expired ⏰
+          Cart Expired or Empty 🛒
         </h1>
         <Link
           href="/"
@@ -40,6 +43,42 @@ export default function Page() {
     );
   }
 
+  // Checkout handler
+  const handleCheckout = async () => {
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/mongoroute", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cartlist,
+          totalPrice,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Server error");
+      }
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert("Order placed successfully ✅");
+        clearCart();
+      } else {
+        alert(data.message || "Checkout failed ❌");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Failed to fetch ❌ API not reachable");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container mx-auto max-w-5xl py-10 px-4">
       <h1 className="text-3xl font-bold mb-4">
@@ -47,12 +86,12 @@ export default function Page() {
       </h1>
 
       <p className="text-red-500 font-semibold mb-6">
-        ⏳ Cart will clear automatically in 5 mint
+        Cart will clear automatically in 5 minutes ⏰
       </p>
 
       {/* Cart Items */}
       <div className="space-y-6">
-        {cart.map((item, index) => (
+        {cartlist.map((item, index) => (
           <div
             key={index}
             className="flex items-center gap-6 border p-4 rounded-lg"
@@ -83,8 +122,16 @@ export default function Page() {
           Total: ${totalPrice.toFixed(2)}
         </h2>
 
-        <button className="bg-orange-400 text-white font-bold px-8 py-3 rounded">
-          Proceed to Checkout
+        <button
+          onClick={handleCheckout}
+          disabled={loading}
+          className={`px-8 py-3 rounded font-bold text-white ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-orange-500 hover:bg-orange-600"
+          }`}
+        >
+          {loading ? "Processing..." : "Proceed to Checkout"}
         </button>
       </div>
     </div>

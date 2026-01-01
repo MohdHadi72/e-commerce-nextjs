@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
- 
+
 import { CartProvider } from "./context/CartContext";
 import Navbar from "../component/Navbar";
- 
+
 
 
 export const metadata: Metadata = {
@@ -18,11 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased bg-white">
-          <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-          <CartProvider >
-            <Navbar />
-            {children}
-          </CartProvider>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <CartProvider>
+          <Navbar />
+          {children}
+        </CartProvider>
+
       </body>
     </html>
   );

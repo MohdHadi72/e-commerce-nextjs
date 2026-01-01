@@ -55,8 +55,15 @@ export default async function SearchPage({
             <p className="text-orange-500 font-semibold">
               ${item.price}
             </p>
+              <button className="mt-2 bg-orange-500 text-white font-bold px-4 py-2 rounded hover:bg-orange-600 transition">
+               View
+              </button>
           </Link>
         ))}
+            
+        
+
+        
       </div>
     </div>
   );
